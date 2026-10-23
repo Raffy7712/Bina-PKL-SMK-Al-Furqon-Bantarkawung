@@ -5,9 +5,6 @@ import globals from "globals";
 const eslintConfig = defineConfig([
   ...nextVitals,
 
-  /* eslint-config-next tidak mengaktifkan `no-undef`, sehingga variabel sisa
-     refactor (mis. `setFiles` setelah state diganti `setBerkas`) lolos lint
-     dan baru meledak di browser. Aturan ini menangkapnya lebih awal. */
   {
     files: ["src/**/*.js", "scripts/**/*.mjs"],
     languageOptions: {
