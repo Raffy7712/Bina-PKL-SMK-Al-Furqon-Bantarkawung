@@ -1,0 +1,15 @@
+# Akses lewat IP lokal (tanpa domain/HTTPS).
+#   docker compose -f docker-compose.yml -f docker-compose.lan.yml up -d
+services:
+  web:
+    ports:
+      - "3000:3000"
+    build:
+      context: ./aplikasi-pkl
+      network: host
+  bot:
+    build:
+      context: ./aplikasipkl-bot
+      network: host
+  caddy:
+    profiles: ["https"]

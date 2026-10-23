@@ -1,0 +1,30 @@
+# dependensi & hasil build
+node_modules/
+.next/
+.next-uji/
+.next-ci/
+out/
+build/
+
+# data runtime
+aplikasi-pkl/data/
+aplikasipkl-bot/auth_info/
+aplikasipkl-bot/deploy/
+graphify-out/
+
+# rahasia
+.env
+.env.*
+**/.env
+**/.env.local
+**/.env.production
+!.env.example
+!**/.env.example
+tunnel/credentials.json
+
+# lain-lain
+*.log
+.DS_Store
+next-env.d.ts
+*.tsbuildinfo
+.DS_Store

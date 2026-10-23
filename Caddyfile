@@ -1,0 +1,26 @@
+# HTTPS otomatis (Let's Encrypt) untuk aplikasi Bina-PKL.
+# Domain diambil dari variabel DOMAIN pada docker-compose.yml.
+
+{$DOMAIN:localhost} {
+	encode zstd gzip
+
+	# Aplikasi Next.js
+	reverse_proxy web:3000 {
+		# unggah lampiran maksimal 10 MB per berkas (lihat src/lib/berkas.js)
+		request_body {
+			max_size 12MB
+		}
+	}
+
+	header {
+		X-Content-Type-Options nosniff
+		X-Frame-Options SAMEORIGIN
+		Referrer-Policy strict-origin-when-cross-origin
+		-Server
+	}
+
+	log {
+		output stdout
+		format console
+	}
+}

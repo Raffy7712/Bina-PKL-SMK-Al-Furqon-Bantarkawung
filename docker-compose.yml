@@ -1,0 +1,101 @@
+# Bina-PKL: aplikasi web, bot WhatsApp, database, dan HTTPS dalam satu berkas.
+#
+# STATUS: RENCANA RILIS. Berkas ini belum dipakai dan tidak dijalankan otomatis.
+# Selama pengembangan, pakai `npm run dev` dengan MariaDB lokal seperti biasa.
+#
+# Pemakaian di server:
+#   1. salin .env.example menjadi .env, isi nilainya
+#   2. docker compose up -d --build
+#   3. docker compose logs -f web        (lihat log aplikasi)
+#
+# Catatan: jalankan TEPAT SATU instance `web`. Penjadwal pengingat berjalan di
+# dalam proses aplikasi, jadi dua replika akan mengirim pengingat dua kali.
+
+services:
+  db:
+    image: mariadb:11
+    restart: unless-stopped
+    environment:
+      MARIADB_DATABASE: ${DB_NAME:-pkl_dev}
+      MARIADB_USER: ${DB_USER:-pkl}
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    command: >
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    networks: [internal]
+
+  web:
+    build: ./aplikasi-pkl
+    # Untuk deploy dari image hasil GitHub Actions, ganti dengan:
+    # image: ghcr.io/USER/REPO-web:latest
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_HOST: db
+      DB_PORT: "3306"
+      DB_NAME: ${DB_NAME:-pkl_dev}
+      DB_USER: ${DB_USER:-pkl}
+      DB_PASSWORD: ${DB_PASSWORD}
+      SESSION_SECRET: ${SESSION_SECRET}
+      WA_BOT_URL: http://bot:3001
+      WA_BOT_TOKEN: ${WA_BOT_TOKEN}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+      GOOGLE_REDIRECT_URI: ${GOOGLE_REDIRECT_URI:-}
+      # Alpine/musl mendahulukan AAAA. Tanpa ini fetch ke oauth2.googleapis.com
+      # menunggu IPv6 yang tidak ada di jaringan container lalu gagal.
+      NODE_OPTIONS: --dns-result-order=ipv4first
+      PKL_BERKAS_DIR: /app/data/berkas
+    volumes:
+      - berkas:/app/data/berkas
+    networks: [internal]
+
+  bot:
+    build: ./aplikasipkl-bot
+    # image: ghcr.io/USER/REPO-bot:latest
+    restart: unless-stopped
+    environment:
+      HOST: 0.0.0.0
+      PORT: "3001"
+      API_TOKEN: ${WA_BOT_TOKEN}
+      WHATSAPP_AUTH_DIR: /data/auth_info
+      WHATSAPP_PAIRING_PHONE: ${WHATSAPP_PAIRING_PHONE:-}
+      LOG_LEVEL: ${BOT_LOG_LEVEL:-info}
+    volumes:
+      - wa_session:/data
+    networks: [internal]
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    depends_on: [web]
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DOMAIN: ${DOMAIN:-localhost}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks: [internal]
+
+volumes:
+  db_data:
+  berkas:
+  wa_session:
+  caddy_data:
+  caddy_config:
+
+networks:
+  internal:

@@ -1,0 +1,19 @@
+# Akses publik cepat lewat Cloudflare Tunnel tanpa akun (quick tunnel).
+#
+# Pemakaian:
+#   docker compose -f docker-compose.yml -f docker-compose.lan.yml \
+#                  -f docker-compose.tunnel-cepat.yml up -d
+#   docker compose -f docker-compose.yml -f docker-compose.lan.yml \
+#                  -f docker-compose.tunnel-cepat.yml logs -f tunnel
+#
+# Alamat muncul di log, bentuknya https://kata-kata-acak.trycloudflare.com.
+# Alamat ini BERGANTI setiap container dibuat ulang atau server reboot, dan
+# tidak ada jaminan uptime. Untuk alamat tetap pakai docker-compose.tunnel.yml.
+
+services:
+  tunnel:
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    command: tunnel --no-autoupdate --url http://web:3000
+    depends_on: [web]
+    networks: [internal]

@@ -1,0 +1,30 @@
+# Akses publik permanen lewat Cloudflare Tunnel dengan domain sendiri.
+#
+# Tunnel dijalankan dengan konfigurasi lokal (tunnel/config.yml), bukan
+# konfigurasi dari dashboard. Alasannya: dashboard menyimpan hostname dengan
+# Service Type HTTPS, sedangkan container `web` melayani HTTP biasa, sehingga
+# pengunjung mendapat galat 525.
+#
+# Pemakaian:
+#   1. Buat named tunnel di dashboard Zero Trust > Networks > Tunnels, salin
+#      token dari blok perintah `cloudflared service install`.
+#   2. Turunkan token itu menjadi tunnel/credentials.json (lihat README.md
+#      bagian 11.2), lalu isi TUNNEL_TOKEN di .env sebagai arsip.
+#   3. Sesuaikan hostname di tunnel/config.yml.
+#   4. docker compose -f docker-compose.yml -f docker-compose.lan.yml \
+#                    -f docker-compose.tunnel.yml up -d
+#
+# Alamatnya tetap, misal https://pkl.contoh.sch.id, dan tidak berubah saat
+# server reboot. Tidak perlu membuka port apa pun ke internet.
+#
+# Butuh alamat acak tanpa akun Cloudflare? Pakai docker-compose.tunnel-cepat.yml.
+
+services:
+  tunnel:
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    command: tunnel --no-autoupdate --config /etc/cloudflared/config.yml run
+    volumes:
+      - ./tunnel:/etc/cloudflared:ro
+    depends_on: [web]
+    networks: [internal]

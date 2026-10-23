@@ -1,0 +1,129 @@
+@import "tailwindcss";
+
+@theme {
+  /* Fonts (variables injected by next/font in root layout) */
+  --font-sans: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-bricolage), var(--font-space-grotesk),
+    ui-sans-serif, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
+
+  /* Palet SMK Al Furqon Bantarkawung — dari logo resmi sekolah
+     (teal #02826d + emas #c28c21/#edba53) */
+  --color-ink: #0e1a18;
+  --color-paper: #f4efe4;
+  --color-sun: #edba53; /* emas sekolah */
+  --color-candy: #f19aa7;
+  --color-marine: #02826d; /* teal sekolah */
+  --color-mint: #7be495;
+  --color-grape: #c6a8ff;
+  --color-tang: #c28c21; /* emas tua */
+  --color-cherry: #ff6b6b;
+
+  /* Hard shadows → elevasi halus ala Figma (warna tetap) */
+  --shadow-brutal-sm: 0 1px 0 0 rgba(14, 26, 24, 0.16);
+  --shadow-brutal: 0 4px 12px rgba(14, 26, 24, 0.15);
+  --shadow-brutal-lg: 0 8px 20px rgba(14, 26, 24, 0.12);
+
+  /* Radii: 8px standar komponen, 12px untuk kartu besar */
+  --radius-brutal: 8px;
+
+  /* Animations */
+  --animate-pop: pop 0.25s cubic-bezier(0.2, 1.4, 0.6, 1) both;
+}
+
+@keyframes pop {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Judul memakai Bricolage dengan bobot tegas; angka besar ikut terbaca kuat. */
+.font-display {
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+
+body {
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-weight: 330;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--color-sun);
+  color: var(--color-ink);
+}
+
+* {
+  scrollbar-color: var(--color-ink) transparent;
+  scrollbar-width: thin;
+}
+
+*:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Penampilan popup/layer Leaflet mengikuti gaya neo-brutalism */
+.leaflet-container {
+  font-family: var(--font-sans);
+  background: #dce9e5;
+}
+
+.leaflet-popup-content-wrapper {
+  border: 1px solid rgba(14, 26, 24, 0.2);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(14, 26, 24, 0.15);
+  background: #ffffff;
+  font-weight: 700;
+}
+
+.leaflet-popup-tip {
+  border: 1px solid rgba(14, 26, 24, 0.2);
+  background: #ffffff;
+}
+
+.leaflet-popup-content {
+  margin: 6px 10px;
+  font-size: 12px;
+}
+
+.leaflet-bar a {
+  border-right-color: var(--color-ink) !important;
+  color: var(--color-ink);
+  font-weight: 700;
+}
+
+.leaflet-bar {
+  border: 1px solid rgba(14, 26, 24, 0.2) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 1px 0 0 rgba(14, 26, 24, 0.16) !important;
+  overflow: hidden;
+}
+
+@media print {
+  body {
+    background: #ffffff;
+    background-image: none;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .shadow-brutal,
+  .shadow-brutal-lg,
+  .shadow-brutal-sm {
+    box-shadow: none !important;
+  }
+}

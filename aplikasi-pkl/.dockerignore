@@ -1,0 +1,15 @@
+node_modules
+.next
+.next-uji
+.next-ci
+data
+.env
+.env.*
+!.env.example
+*.log
+.git
+.gitignore
+Dockerfile
+.dockerignore
+README.md
+scripts

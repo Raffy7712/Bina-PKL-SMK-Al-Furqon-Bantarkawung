@@ -1,0 +1,35 @@
+{
+  "name": "aplikasi-pkl",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "mock": "node scripts/mock-lokal.mjs",
+    "lint": "eslint",
+    "db:reset": "node scripts/reset-db.mjs",
+    "db:stress": "node scripts/stress.mjs",
+    "bench": "node scripts/bench.mjs",
+    "test:impor": "node scripts/test-impor.mjs",
+    "test:api": "node scripts/test-api.mjs",
+    "test:e2e": "node scripts/e2e.mjs",
+    "db:impor": "node scripts/impor-sqlite.mjs",
+    "db:verifikasi": "node scripts/verifikasi-impor.mjs"
+  },
+  "dependencies": {
+    "leaflet": "^1.9.4",
+    "mysql2": "^3.24.6",
+    "next": "16.4.2",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "read-excel-file": "^9.3.12"
+  },
+  "devDependencies": {
+    "@tailwindcss/turbopack": "^4",
+    "eslint": "^9",
+    "eslint-config-next": "16.4.2",
+    "tailwindcss": "^4"
+  }
+}
